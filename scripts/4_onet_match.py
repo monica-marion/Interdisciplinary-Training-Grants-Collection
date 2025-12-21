@@ -1,11 +1,8 @@
-#!/usr/bin/env python
-# coding: utf-8
-
-# In[1]:
-
-
 ###script to match onet skills
 ##create an embedding space of O*NET skills and then of abstracts based on similarity of skills
+#takes as input grants.csv and Content Model Reference.xlsx
+#creates as output an updated grants.csv and the validation spreadsheet onet_matching.csv
+
 #imports
 import pandas as pd
 import numpy as np
@@ -13,18 +10,8 @@ import re
 from sentence_transformers import SentenceTransformer, util
 model = SentenceTransformer('paraphrase-MiniLM-L6-v2')
 from sklearn.manifold import TSNE
-import matplotlib.pyplot as plt
-import plotly.express as px
-import matplotlib
-import matplotlib as mpl
-import textwrap
 from nltk.tokenize import sent_tokenize, word_tokenize
 import torch
-from adjustText import adjust_text
-
-
-# In[2]:
-
 
 ##grant data
 nsf_df = pd.read_csv('../output/grants.csv')
@@ -32,15 +19,12 @@ nsf_df = pd.read_csv('../output/grants.csv')
 ##O*NET skills database (from https://www.onetcenter.org/database.html#all-files)
 onet_df = pd.read_excel('../input/Content Model Reference.xlsx')
 
-
-# In[3]:
-
-
-#create broad category labels for plotting
+#create broad category labels
 ##broadest label
 onet_df['Category'] = onet_df['Element ID'].astype(str).str[0]
 ##second broadest label
 onet_df['Category2'] = onet_df['Element ID'].astype(str).str[:3]
+
 
 #limit skills to categories 1a 4a (following Sabet et al) 
 # and 2 ("skills knowledge education")
@@ -58,29 +42,16 @@ onet_df = onet_df.drop(125)
 #reset index
 onet_df = onet_df.reset_index(drop=True)
 
-
-# In[64]:
-
-
 ##create embedding from O*NET description
 #using pretrained sentence-transformers model
 sentences = onet_df['Description']
 embedding = model.encode(sentences)
 
-
-# In[51]:
-
-
 ##create dataframe of sentences and embeddings
-
 d = {'element':onet_df['Element Name'], 'sent': sentences, 
      'embed': embedding.tolist(), 'label1':onet_df['Category'],
     'label2':onet_df['Category2']}
 embeddings_df = pd.DataFrame(data=d)
-
-
-# In[65]:
-
 
 ##create a new column in the dataframe and add all skills for which 
 ##cosine similarity to a sentence in that abstract is above a certain value
@@ -146,19 +117,11 @@ for j in range(len(nsf_df)):
 
 nsf_df ['O*Net Skills']= onet_column
 
-
-# In[66]:
-
-
 ### make validation dataframe
 d = {'Award':awards_list, 'Sentence': match_sent, 
      'Skill': match_skill, 'Similarity Value':cos_sim_values}
 validation_df = pd.DataFrame(data=d)
 validation_df.to_csv('../output/onet_matching.csv', index=False)
-
-
-# In[67]:
-
 
 ## Repeat extraction for Outcome Reports
 #set the embedding list as the O*Net skills embeddings
@@ -222,16 +185,8 @@ for j in range(len(nsf_df)):
 
 nsf_df ['O*Net Skills Outcome Reports']= onet_column
 
-
-# In[68]:
-
-
 ##save grants csv
 nsf_df.to_csv('../output/grants.csv', index=False)
-
-
-# In[ ]:
-
 
 
 

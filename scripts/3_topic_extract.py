@@ -1,23 +1,12 @@
-#!/usr/bin/env python
-# coding: utf-8
-
-# In[2]:
-
-
-###script to extract topic terms from titles and first sentences
+###script to extract topic terms from titles
 ##Adapted from Milojevic (2015) and code written by Hongyu Zhou 
+# takes as input grants.csv and genword_master.txt stopwords
+# creates as output an updated grants.csv
+
 import pandas as pd
-
-
-# In[12]:
-
 
 #import data
 nsf_df = pd.read_csv("../output/grants.csv")
-
-
-# In[13]:
-
 
 def normalize_cog(title):     
     title = title.lower() # lowercase
@@ -26,10 +15,6 @@ def normalize_cog(title):
     title = ''.join(e if not e.isdigit() else '' for e in title)   # remove numbers
     title = ' '.join([word for word in title.split() if len(word) > 1]).strip() 
     return title
-
-
-# In[14]:
-
 
 def plural3(word):
     # handle plural forms
@@ -42,19 +27,11 @@ def plural3(word):
             return word[:-1]
     return word
 
-
-# In[15]:
-
-
 exc = {}  # stop words that delimit the phrases
 with open('../input/genword_master.txt', 'r') as file: 
     for line in file:
         word = line.strip().lower()
         exc[word] = 1    
-
-
-# In[16]:
-
 
 def extract_cog(title):
     
@@ -90,10 +67,6 @@ def extract_cog(title):
     
     return output_phrase
 
-
-# In[17]:
-
-
 docs= nsf_df['Title']
 
 #make list to fill
@@ -101,20 +74,13 @@ topics_list = []
 
 for i in docs:
     #print (extract_cog(i))
-    topics_list.append(extract_cog(i))
+    topic = str(extract_cog(i))
+    topic = topic.replace("{", "")
+    topic = topic.replace("}", "")
+    topic = topic.replace("'", "")
+    topics_list.append(topic)
 
 nsf_df['Title Topics'] = topics_list
 
-
-# In[18]:
-
-
 #save these terms to master csv
 nsf_df.to_csv('../output/grants.csv', index=False)
-
-
-# In[ ]:
-
-
-
-

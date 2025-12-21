@@ -1,5 +1,8 @@
 ###script to extract terms from abstracts and outcome reports
-###extracts discipline terms, burning glass skills, and educational program terms
+#extracts discipline terms, Lightcast skills, and educational program terms
+#takes as input grants_0.csv, as well as discipline_terms, program_terms, lightcast, wos_terms, wos_categories, and steamb_terms.csv
+# produces grants.csv
+
 import re
 import pandas as pd
 import spacy

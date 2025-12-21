@@ -1,13 +1,14 @@
 ### alternate script to extract field/discipline terms to generate term list for broader extraction
 # use O llama to generate lists of discipline terms
-# takes grants_1.csv as input and returns a new version with three new columns
+# takes grants_1.csv as input
+# returns a new version of grants_1.csv with three new columns as well as discipline_terms_llm.csv
 
 import ollama
 import pandas as pd
 import re
 get_ipython().system('ollama pull llama3')
 
-#import grant data
+# import grant data
 nsf_df = pd.read_csv("../output/grants_1.csv")
 
 ### prompt 1 (used in combination with manual list to generate final discipline list)
@@ -97,5 +98,5 @@ disc_df = pd.DataFrame(disc_list, columns=['terms'])
 disc_df.to_csv("../output/discipline_terms_llm.csv")
 
 #save grants csv
-nsf_df.to_csv("../output/grants_1.csv")
+nsf_df.to_csv("../output/grants_1.csv", index=False)
 

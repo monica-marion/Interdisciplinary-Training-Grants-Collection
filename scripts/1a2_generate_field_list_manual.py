@@ -1,5 +1,6 @@
 
 ## script to create a list of discipline terms extracted manually from grants
+# and combine this list with the llm extracted terms to create the final discipline list
 # run this after manually filling the 'disciplines_clean_manual' column with discipline terms taken directly from the 'from_sentences' and 'trimmed_sentences' column
 # takes grants_1.csv as input (grant awards with extracted discipline sentences)
 # creates discipline_terms_manual.csv as output
@@ -33,5 +34,5 @@ terms_list = sorted(terms_list, key=len, reverse=True)
 
 ##save terms_list
 terms_df = pd.DataFrame(terms_list)
-terms_df.to_csv('../output/discipline_terms_manual_test.csv', index=False)
+terms_df.to_csv('../output/discipline_terms_manual.csv', index=False)
 
